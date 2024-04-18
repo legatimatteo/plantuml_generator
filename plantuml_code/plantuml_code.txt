@@ -1,0 +1,107 @@
+@startuml
+class PasswordManagement{ 
+	 - password : String 
+	 + PasswordManagement(String _password, byte[] _sale)
+	 + getPassword() 
+}
+class Comprensorio{  
+	 + Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
+	 + getNome()
+	 + toStringComuniLimitrofi()
+	 + toString() 
+}
+class FattoreDiConversione{ 
+	 - coppia : Coppia
+	 - valore : float 
+	 + FattoreDiConversione(Coppia _coppia, float _valore)
+	 + isSettabile()
+	 + isEquals(FattoreDiConversione _fattore)
+	 + isDipendente(FattoreDiConversione _fattoreDipendete, Categoria _categoriaCorrente)
+	 + isDipendente(FattoreDiConversione _fattoreDipendete)
+	 + isDipendente(Categoria _categoriaCorrente)
+	 + isConcorde(FattoreDiConversione _fattoreDipendente)
+	 + getCoppia()
+	 + getValore()
+	 + getValoreInverso()
+	 + getFattoreInverso()
+	 + setValore(float _valore)
+	 + toString() 
+}
+class Configuratore{ 
+	 - username : String
+	 - organizzazione : Organizzazione
+	 - password : PasswordManagement
+	 - gruppo : String 
+	 + Configuratore(String _username, PasswordManagement _password)
+	 + saveOrganizzazione()
+	 + getUsername()
+	 + getPassword()
+	 + getOrganizzazione() 
+}
+class Gerarchia{ 
+	 - radice : Categoria
+	 - comprensorio : Comprensorio 
+	 + Gerarchia(Categoria _radice, Comprensorio _comprensorio)
+	 + printTree()
+	 + getRadice()
+	 + getComprensorio()
+	 + setComprensorio(Comprensorio _comprensorio)
+	 + aggiungiFoglia(Categoria _categoriaPadre, Categoria _nodoNuovo, String _dominio)
+	 + getCategoria(String _nomeCategoriaDaCercare)
+	 + esisteCategoria(String _nomeCategoriaDaCercare) 
+}
+class Categoria{ 
+	 - nome : String
+	 - campo : String
+	 - descrizione : String 
+	 + Categoria(String _nome, String _campo, String _descrizione)
+	 + addFiglio(String _dominio, String _nome, String _descrizione)
+	 + addFiglio(String _dominio, String _nome, String _campo, String _descrizione)
+	 + toString()
+	 + isFoglia()
+	 + getCampo()
+	 + getDescrizione()
+	 + getNome()
+	 + setCampo(String _campo)
+	 + setNome(String _nome)
+	 + setDescrizione(String _descrizione) 
+}
+class Coppia{ 
+	 - cat1 : Categoria
+	 - cat2 : Categoria 
+	 + Coppia(Categoria _cat1, Categoria _cat2)
+	 + getPrimaCategoria()
+	 + getSecondaCategoria()
+	 + getNomePrimaCategoria()
+	 + getNomeSecondaCategoria()
+	 + contains(Categoria _cat)
+	 + getNomeCoppia()
+	 + getCoppiaInversa()
+	 + equals(Coppia _coppia) 
+}
+class Organizzazione{ 
+	 - gestioneComprensori : GestioneComprensori
+	 - gestioneGerarchie : GestioneGerarchie
+	 - gestioneFattori : GestioneFattori
+	 - nome : String 
+	 + Organizzazione(String _username)
+	 - fetchComprensori()
+	 + salvaFattoriDiConversione()
+	 + salvaComprensori()
+	 + salvaGerarchie()
+	 + aggiungiGerarchia(Gerarchia _gerarchia)
+	 + getGerarchia(String nomeGerarchia)
+	 + stampaGerarchie()
+	 + esisteGerarchia(String nomeRadice)
+	 + aggiungiFoglia(Gerarchia _gerarchia, String _nomePadre, Categoria _nodoNuovo, String _dominio)
+	 + isFattoriSettati()
+	 + setfattoreDiConversione(String _coppia, float _valore)
+	 + inizializzaFattoriDiConversione()
+	 + stampaFattoriDipendenti(Categoria _categoriaDipendente)
+	 + stampaComprensori()
+	 + getNome()
+	 + setNome(String _nome)
+	 + esisteComprensorio(String _nome)
+	 + aggiungiComprensorio(Comprensorio _comprensorio) 
+}
+@enduml
