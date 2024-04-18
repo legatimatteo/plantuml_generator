@@ -1,107 +1,226 @@
 @startuml
-class PasswordManagement{ 
-	 - password : String 
-	 + PasswordManagement(String _password, byte[] _sale)
-	 + getPassword() 
+class Main{ 
+	 - {static} ERR_PREFIX : String = "ERROR: " {readOnly}
+	 - {static} ERR_NO_COMPRENSORI_CREATI : String = ERR_PREFIX + "Non hai ancora creato un comprensorio." {readOnly}
+	 - {static} ERR_COMPRENSORIO_ESISTENTE : String = ERR_PREFIX + "Il comprensorio che vuoi creare esiste già." {readOnly}
+	 - {static} ERR_GERARCHIA_GIA_ESISTENTE : String = ERR_PREFIX + "La gerarchia già esiste." {readOnly}
+	 - {static} ERR_CATEGORIA_GIA_ESISTENTE : String = ERR_PREFIX + "La categoria già esiste." {readOnly}
+	 - {static} ERR_CATEGORIA_NON_ESISTENTE : String = ERR_PREFIX + "La categoria non esiste." {readOnly}
+	 - {static} ERR_NO_GERARCHIE_CREATE : String = ERR_PREFIX + "Non hai ancora creato una gerarchia." {readOnly}
+	 + {static} ERR_FATTORE_GIA_IMPOSTATO : String = ERR_PREFIX + "Il valore del fattore di conversione scelto é giá stato impostato." {readOnly}
+	 + {static} ERR_DOMINIO_GIA_ESISTENTE : String = ERR_PREFIX + "Dominio già esistente nella categoria padre" {readOnly}
+	 -  String : static =  MENU_CONFIGURATORE_TITOLO = "Menu configuratore" {readOnly} 
+	 + {static} main(String[] args)
+	 - {static} creaNuovoComprensorio(Organizzazione org)
+	 - {static} creaNuovaRadice(Organizzazione org)
+	 - {static} aggiungiCategoria(Organizzazione _org, Gerarchia g)
+	 - {static} selezionaCategoria(Organizzazione _org)
+	 - {static} selezionaCoppia(Organizzazione _org)
+	 - {static} selezionaComprensorio(Organizzazione _org)
+	 + {static} selezionaGerarchia(Organizzazione _org) 
 }
-class Comprensorio{  
-	 + Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
-	 + getNome()
-	 + toStringComuniLimitrofi()
-	 + toString() 
+class PasswordManagement{ 
+	 -  password : String   
+	 +  PasswordManagement(String _password, byte[] _sale)
+	 +  getPassword() 
+}
+class Comprensorio{ 
+	 -  nome : String  {readOnly}
+	 -  comuniLimitrofi : ArrayList<String>  {readOnly} 
+	 +  Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
+	 +  getNome()
+	 +  toStringComuniLimitrofi()
+	 +  toString() 
 }
 class FattoreDiConversione{ 
-	 - coppia : Coppia
-	 - valore : float 
-	 + FattoreDiConversione(Coppia _coppia, float _valore)
-	 + isSettabile()
-	 + isEquals(FattoreDiConversione _fattore)
-	 + isDipendente(FattoreDiConversione _fattoreDipendete, Categoria _categoriaCorrente)
-	 + isDipendente(FattoreDiConversione _fattoreDipendete)
-	 + isDipendente(Categoria _categoriaCorrente)
-	 + isConcorde(FattoreDiConversione _fattoreDipendente)
-	 + getCoppia()
-	 + getValore()
-	 + getValoreInverso()
-	 + getFattoreInverso()
-	 + setValore(float _valore)
-	 + toString() 
+	 - {static} MAX_VALUE : float = 2 {readOnly}
+	 - {static} MIN_VALUE : float = 1 / MAX_VALUE {readOnly}
+	 -  coppia : Coppia  
+	 -  valore : float   
+	 +  FattoreDiConversione(Coppia _coppia, float _valore)
+	 +  isSettabile()
+	 +  isEquals(FattoreDiConversione _fattore)
+	 +  isDipendente(FattoreDiConversione _fattoreDipendete, Categoria _categoriaCorrente)
+	 +  isDipendente(FattoreDiConversione _fattoreDipendete)
+	 +  isDipendente(Categoria _categoriaCorrente)
+	 +  isConcorde(FattoreDiConversione _fattoreDipendente)
+	 +  getCoppia()
+	 +  getValore()
+	 +  getValoreInverso()
+	 +  getFattoreInverso()
+	 + {static} getMAX_VALUE()
+	 + {static} getMIN_VALUE()
+	 +  setValore(float _valore)
+	 +  toString() 
 }
 class Configuratore{ 
-	 - username : String
-	 - organizzazione : Organizzazione
-	 - password : PasswordManagement
-	 - gruppo : String 
-	 + Configuratore(String _username, PasswordManagement _password)
-	 + saveOrganizzazione()
-	 + getUsername()
-	 + getPassword()
-	 + getOrganizzazione() 
+	 -  username : String  
+	 -  organizzazione : Organizzazione  
+	 -  password : PasswordManagement  
+	 -  gruppo : String   
+	 +  Configuratore(String _username, PasswordManagement _password)
+	 +  saveOrganizzazione()
+	 +  getUsername()
+	 +  getPassword()
+	 +  getOrganizzazione() 
 }
 class Gerarchia{ 
-	 - radice : Categoria
-	 - comprensorio : Comprensorio 
-	 + Gerarchia(Categoria _radice, Comprensorio _comprensorio)
-	 + printTree()
-	 + getRadice()
-	 + getComprensorio()
-	 + setComprensorio(Comprensorio _comprensorio)
-	 + aggiungiFoglia(Categoria _categoriaPadre, Categoria _nodoNuovo, String _dominio)
-	 + getCategoria(String _nomeCategoriaDaCercare)
-	 + esisteCategoria(String _nomeCategoriaDaCercare) 
+	 -  radice : Categoria  
+	 -  comprensorio : Comprensorio   
+	 +  Gerarchia(Categoria _radice, Comprensorio _comprensorio)
+	 +  printTree()
+	 +  getRadice()
+	 +  getComprensorio()
+	 +  setComprensorio(Comprensorio _comprensorio)
+	 +  aggiungiFoglia(Categoria _categoriaPadre, Categoria _nodoNuovo, String _dominio)
+	 +  getCategoria(String _nomeCategoriaDaCercare)
+	 +  esisteCategoria(String _nomeCategoriaDaCercare) 
 }
 class Categoria{ 
-	 - nome : String
-	 - campo : String
-	 - descrizione : String 
-	 + Categoria(String _nome, String _campo, String _descrizione)
-	 + addFiglio(String _dominio, String _nome, String _descrizione)
-	 + addFiglio(String _dominio, String _nome, String _campo, String _descrizione)
-	 + toString()
-	 + isFoglia()
-	 + getCampo()
-	 + getDescrizione()
-	 + getNome()
-	 + setCampo(String _campo)
-	 + setNome(String _nome)
-	 + setDescrizione(String _descrizione) 
+	 -  nome : String  
+	 -  campo : String  
+	 -  descrizione : String  
+	 -  figli : HashMap<String, Categoria>   
+	 +  Categoria(String _nome, String _campo, String _descrizione)
+	 +  addFiglio(String _dominio, String _nome, String _descrizione)
+	 +  addFiglio(String _dominio, String _nome, String _campo, String _descrizione)
+	 + {static} findNode(Categoria _nodoPadre, String _nomeCategoriaDaCercare)
+	 + {static} printFigli(Categoria _categoria, String space)
+	 +  toString()
+	 +  isFoglia()
+	 +  getCampo()
+	 +  getDescrizione()
+	 +  getNome()
+	 +  setCampo(String _campo)
+	 +  setNome(String _nome)
+	 +  setDescrizione(String _descrizione) 
 }
 class Coppia{ 
-	 - cat1 : Categoria
-	 - cat2 : Categoria 
-	 + Coppia(Categoria _cat1, Categoria _cat2)
-	 + getPrimaCategoria()
-	 + getSecondaCategoria()
-	 + getNomePrimaCategoria()
-	 + getNomeSecondaCategoria()
-	 + contains(Categoria _cat)
-	 + getNomeCoppia()
-	 + getCoppiaInversa()
-	 + equals(Coppia _coppia) 
+	 -  cat1 : Categoria  
+	 -  cat2 : Categoria   
+	 +  Coppia(Categoria _cat1, Categoria _cat2)
+	 +  getPrimaCategoria()
+	 +  getSecondaCategoria()
+	 +  getNomePrimaCategoria()
+	 +  getNomeSecondaCategoria()
+	 +  contains(Categoria _cat)
+	 +  getNomeCoppia()
+	 +  getCoppiaInversa()
+	 +  equals(Coppia _coppia) 
 }
 class Organizzazione{ 
-	 - gestioneComprensori : GestioneComprensori
-	 - gestioneGerarchie : GestioneGerarchie
-	 - gestioneFattori : GestioneFattori
-	 - nome : String 
-	 + Organizzazione(String _username)
-	 - fetchComprensori()
-	 + salvaFattoriDiConversione()
-	 + salvaComprensori()
-	 + salvaGerarchie()
-	 + aggiungiGerarchia(Gerarchia _gerarchia)
-	 + getGerarchia(String nomeGerarchia)
-	 + stampaGerarchie()
-	 + esisteGerarchia(String nomeRadice)
-	 + aggiungiFoglia(Gerarchia _gerarchia, String _nomePadre, Categoria _nodoNuovo, String _dominio)
-	 + isFattoriSettati()
-	 + setfattoreDiConversione(String _coppia, float _valore)
-	 + inizializzaFattoriDiConversione()
-	 + stampaFattoriDipendenti(Categoria _categoriaDipendente)
-	 + stampaComprensori()
-	 + getNome()
-	 + setNome(String _nome)
-	 + esisteComprensorio(String _nome)
-	 + aggiungiComprensorio(Comprensorio _comprensorio) 
+	 -  gestioneComprensori : GestioneComprensori  
+	 -  gestioneGerarchie : GestioneGerarchie  
+	 -  gestioneFattori : GestioneFattori  
+	 -  nome : String   
+	 +  Organizzazione(String _username)
+	 -  fetchComprensori()
+	 +  salvaFattoriDiConversione()
+	 +  salvaComprensori()
+	 +  salvaGerarchie()
+	 +  aggiungiGerarchia(Gerarchia _gerarchia)
+	 +  getGerarchia(String nomeGerarchia)
+	 +  stampaGerarchie()
+	 +  esisteGerarchia(String nomeRadice)
+	 +  aggiungiFoglia(Gerarchia _gerarchia, String _nomePadre, Categoria _nodoNuovo, String _dominio)
+	 +  isFattoriSettati()
+	 +  setfattoreDiConversione(String _coppia, float _valore)
+	 +  inizializzaFattoriDiConversione()
+	 +  stampaFattoriDipendenti(Categoria _categoriaDipendente)
+	 +  stampaComprensori()
+	 +  getNome()
+	 +  setNome(String _nome)
+	 +  esisteComprensorio(String _nome)
+	 +  aggiungiComprensorio(Comprensorio _comprensorio) 
+}
+class GestioneFattori{ 
+	 -  fattori : Map<String, FattoreDiConversione>  
+	 -  fileManager : FileManagerFattori   
+	 +  GestioneFattori(String _username, List<Categoria> _foglie)
+	 +  inizializzaFattoriDiConversione(List<Categoria> _foglie)
+	 -  risolviDipendenza(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente, FattoreDiConversione _fattoreDipendente)
+	 -  cercaDipendenze(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente)
+	 +  stampaFattoriDipendenti(Categoria _categoriaFoglia)
+	 +  rimuoviFattoriDipendentiDa(Categoria _categoriaPadre)
+	 +  isFattoriSettati()
+	 +  isNomeCoppiaInverso(String _nomeCoppia)
+	 +  getFattorePerNome(String _nomeCoppia)
+	 +  setValoreFattore(String _nomeCoppia, float _valore)
+	 +  impostaValoreFattoreDiConversione(String _nomeCoppia, float _valore)
+	 -  importaFattori()
+	 +  salvaFattori()
+	 +  stampaFattoriDiConversione() 
+}
+class GestioneConfiguratori{ 
+	 - {static} USERNAME_PREDEFINITO : String = "admin" {readOnly}
+	 - {static} PASSWORD_PREDEFINITA : String = "admin" {readOnly}
+	 -  configuratori : ArrayList<Configuratore>  
+	 -  fileManager : FileManagerConfiguratori   
+	 +  GestioneConfiguratori()
+	 +  accedi(String username)
+	 + {static} accediFirstLogin(String _username)
+	 -  isFirstLogin(String username)
+	 +  importConfiguratori()
+	 +  saveConfiguratori()
+	 +  addConfiguratore(Configuratore _configuratore)
+	 +  containsConfiguratore(String usernameConfiguratore)
+	 +  getConfiguratoreByUsername(String username)
+	 +  toString() 
+}
+class GestioneGerarchie{ 
+	 -  gerarchie : Map<String, Gerarchia>  
+	 -  fileManager : FileManagerGerarchie   
+	 +  GestioneGerarchie(String _username)
+	 +  aggiungiGerarchia(Gerarchia _gerarchia)
+	 +  esisteGerarchia(String _nomeGerarchia)
+	 +  getGerarchia(String _nomeRadice)
+	 +  stampaGerarchie()
+	 -  importaGerarchie()
+	 +  salvaGerarchie() 
+}
+class GestioneComprensori{ 
+	 -  comprensori : List<Comprensorio>  
+	 -  fileManager : FileManagerComprensori   
+	 +  GestioneComprensori(String _username)
+	 +  stampaComprensori()
+	 +  getComprensorioByName(String _nome)
+	 +  esisteComprensorio(String _nome)
+	 +  aggiungiComprensorio(Comprensorio _comprensorio)
+	 -  importaComprensorio()
+	 +  salvaComprensorio() 
+}
+class FileManagerConfiguratori{ 
+	 - {static} FILENAME : String = "Utenti/configuratori.xml" {readOnly} 
+	 +  FileManagerConfiguratori()
+	 +  salva(ArrayList<Configuratore> _lista) 
+}
+class FileManagerComprensori{ 
+	 -  FILENAME : String  {readOnly}
+	 + {static} TAG_COMPRENSORIO : String = "comprensorio", COMUNI = "comuni", NOME = "nome" {readOnly} 
+	 +  FileManagerComprensori(String _username)
+	 +  salva(List<Comprensorio> _lista) 
+}
+class FileManagerFattori{ 
+	 -  FILENAME : String  {readOnly}
+	 - {static} TAG_FATTORE : String = "fattore" {readOnly}
+	 - {static} COPPIA : String = "coppia" {readOnly}
+	 - {static} VALORE : String = "valore" {readOnly} 
+	 +  FileManagerFattori(String _username)
+	 +  salva(Map<String, Float> _lista) 
+}
+class FileManagerGerarchie{ 
+	 -  FILENAME : String  {readOnly}
+	 + {static} TAG_GERARCHIA : String = "radice" {readOnly}
+	 - {static} TAG_COMPRENSORIO : String = "comprensorio" {readOnly}
+	 - {static} ID : String = "id" {readOnly}
+	 - {static} CAMPO : String = "campo" {readOnly}
+	 - {static} DESCRIZIONE : String = "descrizione" {readOnly}
+	 - {static} DOMINIO : String = "dominio" {readOnly}
+	 - {static} NOME : String = "nome" {readOnly} 
+	 +  FileManagerGerarchie(String _username)
+	 +  salva(Map<String, Gerarchia> _lista)
+	 -  leggiFigli(Gerarchia gerarchia, Element nodo)
+	 -  scriviFigli(Document doc, Categoria cat_padre, Element elem_padre)
+	 -  haFigli(NodeList nodeList) 
 }
 @enduml
