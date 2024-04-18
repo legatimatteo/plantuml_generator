@@ -17,7 +17,7 @@ def parse_java_file(file_path):
         return
 
     # finds attributes
-    attributes = re.findall(r'(public|private|protected)?\s*(\w+)\s+(\w+);', java_code)
+    attributes = re.findall(r'(public|private|protected)?\s+(\w+)\s+(\w+);', java_code)
     if attributes:
         attributes_list = []
         for attr in attributes:
@@ -29,7 +29,7 @@ def parse_java_file(file_path):
                     )
 
     # find methods
-    methods = re.findall(r'(public|private|protected)?\s*(\w+)\s+(\w+)\((.*?)\)', java_code)
+    methods = re.findall(r'(public|private|protected)?\s+(\w+)\s+(\w+)\((.*?)\)', java_code)
     if methods:
         methods_list = []
         for method in methods:
