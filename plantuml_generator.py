@@ -28,14 +28,10 @@ def parse_java_file(file_path):
     with open(file_path, 'r') as file:
         java_code = file.read()
 
-    print(file_path)
-
     map_regex = '(?:\s*<\s*\w+\s*(?:,\s*\w+\s*)*>)'
 
     # find class name and visibility
     class_name_visibility = re.search(r'(public|private|protected)?\s*class\s+(\w+)', java_code)
-    print("CLASS NAME\n")
-    print(class_name_visibility)
     if class_name_visibility:
         name = []
         class_visibility = class_name_visibility.group(1)
@@ -48,9 +44,6 @@ def parse_java_file(file_path):
     # finds attributes
     #attributes = re.findall(r'(public|private|protected)\s*(static)?\s*(final)?\s+(\w+' + map_regex + r'?)\s+(\w+);', java_code)
     attributes = re.findall(r'(public|private|protected)\s*(static)?\s*(final)?\s+(\w+' + map_regex + r'?)\s+(\w+)(?:\s*=\s*)?(.*?)?;', java_code)
-
-    print("ATTRIBUTES\n")
-    print(attributes)
     if attributes:
         attributes_list = []
         for attr in attributes:
@@ -64,8 +57,6 @@ def parse_java_file(file_path):
     methods_list = []
     #find constructors
     methods = re.findall(r'(public)\s+(\w+)\s*\((.*?)\)', java_code)
-    print("CONSTRUCTORS\n")
-    print(methods)
     if methods:
         visibility, method_name, parameters = methods[0]
         methods_list.append(
@@ -73,8 +64,6 @@ def parse_java_file(file_path):
         )
     # find methods
     methods = re.findall(r'(public|private|protected)\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
-    print("METHODS\n")
-    print(methods)
     if methods:
         for method in methods:
             # if len(method) == 4:

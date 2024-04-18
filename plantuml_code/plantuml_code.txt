@@ -9,7 +9,7 @@ class Main{
 	 - {static} ERR_NO_GERARCHIE_CREATE : String = ERR_PREFIX + "Non hai ancora creato una gerarchia." {readOnly}
 	 + {static} ERR_FATTORE_GIA_IMPOSTATO : String = ERR_PREFIX + "Il valore del fattore di conversione scelto é giá stato impostato." {readOnly}
 	 + {static} ERR_DOMINIO_GIA_ESISTENTE : String = ERR_PREFIX + "Dominio già esistente nella categoria padre" {readOnly}
-	 -  String : static =  MENU_CONFIGURATORE_TITOLO = "Menu configuratore" {readOnly} 
+	 - {static} MENU_CONFIGURATORE_TITOLO : String = "Menu configuratore" {readOnly} 
 	 + {static} main(String[] args)
 	 - {static} creaNuovoComprensorio(Organizzazione org)
 	 - {static} creaNuovaRadice(Organizzazione org)
