@@ -11,10 +11,12 @@ class java_class:
 
         return f"Class: {class_name_str}\nAttributes:\n{attributes_str}\nMethods:\n{methods_str}"
     
-    def toPlantUML(self):
+    def toPlantUML(self, attribute_comments, method_comments):
         class_name = "class " + ''.join([f"{name['name']}" for name in self.name]) + '{'
+        attribute_comments = "\n\t'" + attribute_comments
         attributes = "".join([f"\n\t {attr['visibility']} {'{static}' if 'static' in attr and attr['static'] else ''} {attr['name']} : {attr['data_type']} {'= ' + attr['var_value'] if 'var_value' in attr and attr['var_value'] else ''} {'{readOnly}' if 'final' in attr and attr['final'] else ''}" for attr in self.attributes])
+        method_comments = "\n\t'" + method_comments
         methods = "".join([f"\n\t {method['visibility']} {'{static}' if 'static' in method and method['static'] else ''} {method['name']}({method['parameters']})" for method in self.methods])
         close_bracket = "\n}\n"
 
-        return f"{class_name} {attributes} {methods} {close_bracket}"
+        return f"{class_name} {attribute_comments} {attributes} {method_comments} {methods} {close_bracket}"

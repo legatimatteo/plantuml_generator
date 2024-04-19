@@ -20,7 +20,7 @@ def write_file(filename, classes):
         file.write('@startuml\n')
         for j_class in classes:
             if j_class is not None:
-                file.write(j_class.toPlantUML())
+                file.write(j_class.toPlantUML('Attributes', 'Methods'))
 
         file.write('@enduml\n')
 

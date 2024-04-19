@@ -1,5 +1,6 @@
 @startuml
 class Main{ 
+	'Attributes 
 	 - {static} ERR_PREFIX : String = "ERROR: " {readOnly}
 	 - {static} ERR_NO_COMPRENSORI_CREATI : String = ERR_PREFIX + "Non hai ancora creato un comprensorio." {readOnly}
 	 - {static} ERR_COMPRENSORIO_ESISTENTE : String = ERR_PREFIX + "Il comprensorio che vuoi creare esiste già." {readOnly}
@@ -10,6 +11,7 @@ class Main{
 	 + {static} ERR_FATTORE_GIA_IMPOSTATO : String = ERR_PREFIX + "Il valore del fattore di conversione scelto é giá stato impostato." {readOnly}
 	 + {static} ERR_DOMINIO_GIA_ESISTENTE : String = ERR_PREFIX + "Dominio già esistente nella categoria padre" {readOnly}
 	 - {static} MENU_CONFIGURATORE_TITOLO : String = "Menu configuratore" {readOnly} 
+	'Methods 
 	 + {static} main(String[] args)
 	 - {static} creaNuovoComprensorio(Organizzazione org)
 	 - {static} creaNuovaRadice(Organizzazione org)
@@ -20,23 +22,29 @@ class Main{
 	 + {static} selezionaGerarchia(Organizzazione _org) 
 }
 class PasswordManagement{ 
+	'Attributes 
 	 -  password : String   
+	'Methods 
 	 +  PasswordManagement(String _password, byte[] _sale)
 	 +  getPassword() 
 }
 class Comprensorio{ 
+	'Attributes 
 	 -  nome : String  {readOnly}
 	 -  comuniLimitrofi : ArrayList<String>  {readOnly} 
+	'Methods 
 	 +  Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
 	 +  getNome()
 	 +  toStringComuniLimitrofi()
 	 +  toString() 
 }
 class FattoreDiConversione{ 
+	'Attributes 
 	 - {static} MAX_VALUE : float = 2 {readOnly}
 	 - {static} MIN_VALUE : float = 1 / MAX_VALUE {readOnly}
 	 -  coppia : Coppia  
 	 -  valore : float   
+	'Methods 
 	 +  FattoreDiConversione(Coppia _coppia, float _valore)
 	 +  isSettabile()
 	 +  isEquals(FattoreDiConversione _fattore)
@@ -54,10 +62,12 @@ class FattoreDiConversione{
 	 +  toString() 
 }
 class Configuratore{ 
+	'Attributes 
 	 -  username : String  
 	 -  organizzazione : Organizzazione  
 	 -  password : PasswordManagement  
 	 -  gruppo : String   
+	'Methods 
 	 +  Configuratore(String _username, PasswordManagement _password)
 	 +  saveOrganizzazione()
 	 +  getUsername()
@@ -65,8 +75,10 @@ class Configuratore{
 	 +  getOrganizzazione() 
 }
 class Gerarchia{ 
+	'Attributes 
 	 -  radice : Categoria  
 	 -  comprensorio : Comprensorio   
+	'Methods 
 	 +  Gerarchia(Categoria _radice, Comprensorio _comprensorio)
 	 +  printTree()
 	 +  getRadice()
@@ -77,10 +89,12 @@ class Gerarchia{
 	 +  esisteCategoria(String _nomeCategoriaDaCercare) 
 }
 class Categoria{ 
+	'Attributes 
 	 -  nome : String  
 	 -  campo : String  
 	 -  descrizione : String  
 	 -  figli : HashMap<String, Categoria>   
+	'Methods 
 	 +  Categoria(String _nome, String _campo, String _descrizione)
 	 +  addFiglio(String _dominio, String _nome, String _descrizione)
 	 +  addFiglio(String _dominio, String _nome, String _campo, String _descrizione)
@@ -96,8 +110,10 @@ class Categoria{
 	 +  setDescrizione(String _descrizione) 
 }
 class Coppia{ 
+	'Attributes 
 	 -  cat1 : Categoria  
 	 -  cat2 : Categoria   
+	'Methods 
 	 +  Coppia(Categoria _cat1, Categoria _cat2)
 	 +  getPrimaCategoria()
 	 +  getSecondaCategoria()
@@ -109,10 +125,12 @@ class Coppia{
 	 +  equals(Coppia _coppia) 
 }
 class Organizzazione{ 
+	'Attributes 
 	 -  gestioneComprensori : GestioneComprensori  
 	 -  gestioneGerarchie : GestioneGerarchie  
 	 -  gestioneFattori : GestioneFattori  
 	 -  nome : String   
+	'Methods 
 	 +  Organizzazione(String _username)
 	 -  fetchComprensori()
 	 +  salvaFattoriDiConversione()
@@ -134,8 +152,10 @@ class Organizzazione{
 	 +  aggiungiComprensorio(Comprensorio _comprensorio) 
 }
 class GestioneFattori{ 
+	'Attributes 
 	 -  fattori : Map<String, FattoreDiConversione>  
 	 -  fileManager : FileManagerFattori   
+	'Methods 
 	 +  GestioneFattori(String _username, List<Categoria> _foglie)
 	 +  inizializzaFattoriDiConversione(List<Categoria> _foglie)
 	 -  risolviDipendenza(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente, FattoreDiConversione _fattoreDipendente)
@@ -152,10 +172,12 @@ class GestioneFattori{
 	 +  stampaFattoriDiConversione() 
 }
 class GestioneConfiguratori{ 
+	'Attributes 
 	 - {static} USERNAME_PREDEFINITO : String = "admin" {readOnly}
 	 - {static} PASSWORD_PREDEFINITA : String = "admin" {readOnly}
 	 -  configuratori : ArrayList<Configuratore>  
 	 -  fileManager : FileManagerConfiguratori   
+	'Methods 
 	 +  GestioneConfiguratori()
 	 +  accedi(String username)
 	 + {static} accediFirstLogin(String _username)
@@ -168,8 +190,10 @@ class GestioneConfiguratori{
 	 +  toString() 
 }
 class GestioneGerarchie{ 
+	'Attributes 
 	 -  gerarchie : Map<String, Gerarchia>  
 	 -  fileManager : FileManagerGerarchie   
+	'Methods 
 	 +  GestioneGerarchie(String _username)
 	 +  aggiungiGerarchia(Gerarchia _gerarchia)
 	 +  esisteGerarchia(String _nomeGerarchia)
@@ -179,8 +203,10 @@ class GestioneGerarchie{
 	 +  salvaGerarchie() 
 }
 class GestioneComprensori{ 
+	'Attributes 
 	 -  comprensori : List<Comprensorio>  
 	 -  fileManager : FileManagerComprensori   
+	'Methods 
 	 +  GestioneComprensori(String _username)
 	 +  stampaComprensori()
 	 +  getComprensorioByName(String _nome)
@@ -190,25 +216,32 @@ class GestioneComprensori{
 	 +  salvaComprensorio() 
 }
 class FileManagerConfiguratori{ 
+	'Attributes 
 	 - {static} FILENAME : String = "Utenti/configuratori.xml" {readOnly} 
+	'Methods 
 	 +  FileManagerConfiguratori()
 	 +  salva(ArrayList<Configuratore> _lista) 
 }
 class FileManagerComprensori{ 
+	'Attributes 
 	 -  FILENAME : String  {readOnly}
 	 + {static} TAG_COMPRENSORIO : String = "comprensorio", COMUNI = "comuni", NOME = "nome" {readOnly} 
+	'Methods 
 	 +  FileManagerComprensori(String _username)
 	 +  salva(List<Comprensorio> _lista) 
 }
 class FileManagerFattori{ 
+	'Attributes 
 	 -  FILENAME : String  {readOnly}
 	 - {static} TAG_FATTORE : String = "fattore" {readOnly}
 	 - {static} COPPIA : String = "coppia" {readOnly}
 	 - {static} VALORE : String = "valore" {readOnly} 
+	'Methods 
 	 +  FileManagerFattori(String _username)
 	 +  salva(Map<String, Float> _lista) 
 }
 class FileManagerGerarchie{ 
+	'Attributes 
 	 -  FILENAME : String  {readOnly}
 	 + {static} TAG_GERARCHIA : String = "radice" {readOnly}
 	 - {static} TAG_COMPRENSORIO : String = "comprensorio" {readOnly}
@@ -217,6 +250,7 @@ class FileManagerGerarchie{
 	 - {static} DESCRIZIONE : String = "descrizione" {readOnly}
 	 - {static} DOMINIO : String = "dominio" {readOnly}
 	 - {static} NOME : String = "nome" {readOnly} 
+	'Methods 
 	 +  FileManagerGerarchie(String _username)
 	 +  salva(Map<String, Gerarchia> _lista)
 	 -  leggiFigli(Gerarchia gerarchia, Element nodo)
