@@ -4,7 +4,9 @@ import re, sys, os
 VISIBILITY_MODIFIER = {
     'public' : '+',
     'private' : '-',
-    'protected' : '#'
+    'protected' : '#',
+    'interface' : '+',
+    'default' : '~'
 }
 
 def print_help():
@@ -29,23 +31,28 @@ def parse_java_file(file_path):
         java_code = file.read()
 
     map_regex = '(?:\s*<\s*\w+\s*(?:,\s*\w+\s*)*>)'
+    class_type = ''
 
     # find class name and visibility
-    class_name_visibility = re.search(r'(public|private|protected)?\s*class\s+(\w+)', java_code)
-    if class_name_visibility:
-        name = []
+    class_name_visibility = re.search(r'(public|private|protected)?\s*(class|interface)\s+(.*?)\s*{', java_code)
+    print('TIPO')
+    print(class_name_visibility.group(3))
+    name = []
+    if class_name_visibility is not None:
         class_visibility = class_name_visibility.group(1)
-        class_name = class_name_visibility.group(2)
-        name = [{"visibility" : VISIBILITY_MODIFIER[class_visibility], "name" : class_name}]
+        class_type = class_name_visibility.group(2)
+        class_name = class_name_visibility.group(3)
+        name = [{"visibility" : VISIBILITY_MODIFIER[class_visibility], "type" : class_type, "name" : class_name}]
     else:
-        print("No classes found in " + file_path)
+        print("No classes/interfaces found in " + file_path)
         return
 
     # finds attributes
-    #attributes = re.findall(r'(public|private|protected)\s*(static)?\s*(final)?\s+(\w+' + map_regex + r'?)\s+(\w+);', java_code)
+    attributes_list = []
     attributes = re.findall(r'(public|private|protected)\s*(static)?\s*(final)?\s+(\w+' + map_regex + r'?)\s+(\w+)(?:\s*=\s*)?(.*?)?;', java_code)
+    print('ATTRIBUTES')
+    print(attributes)
     if attributes:
-        attributes_list = []
         for attr in attributes:
             if len(attr) >= 3:
                 visibility, static, final, data_type, attr_name, value = attr
@@ -55,21 +62,39 @@ def parse_java_file(file_path):
                     )
 
     methods_list = []
-    #find constructors
-    methods = re.findall(r'(public)\s+(\w+)\s*\((.*?)\)', java_code)
-    if methods:
-        visibility, method_name, parameters = methods[0]
-        methods_list.append(
-            {"visibility" : VISIBILITY_MODIFIER[visibility], "return_type" : "constructor", "name" : method_name, "parameters" : parameters}
-        )
-    # find methods
-    methods = re.findall(r'(public|private|protected)\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
-    if methods:
-        for method in methods:
-            # if len(method) == 4:
-            #print(method)
-            visibility, static, return_type, method_name, parameters = method
-            if return_type != 'new':
+    if class_type == 'class':
+        #find constructors
+        methods = re.findall(r'(public)\s+(\w+)\s*\((.*?)\)', java_code)
+        if methods:
+            visibility, method_name, parameters = methods[0]
+            methods_list.append(
+                {"visibility" : VISIBILITY_MODIFIER[visibility], "return_type" : "constructor", "name" : method_name, "parameters" : parameters}
+            )
+        # find methods
+        methods = re.findall(r'(public|private|protected)\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
+        print('METHODS')
+        print(methods)
+        if methods:
+            for method in methods:
+                visibility, static, return_type, method_name, parameters = method
+                if return_type != 'new' and visibility != '':
+                    methods_list.append(
+                        {"visibility" : VISIBILITY_MODIFIER[visibility], "static" : static, "return_type" : return_type, "name" : method_name, "parameters" : parameters}
+                    )
+
+    # find methods interface
+    if class_type == 'interface':
+        methods = re.findall(r'(public|private|protected)?\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
+        print('METHODS')
+        print(methods)
+        if methods:
+            for method in methods:
+                visibility, static, return_type, method_name, parameters = method
+                print('VISIBILITY')
+                print(visibility)
+                if not visibility:
+                    visibility = 'interface'
+                
                 methods_list.append(
                     {"visibility" : VISIBILITY_MODIFIER[visibility], "static" : static, "return_type" : return_type, "name" : method_name, "parameters" : parameters}
                 )
