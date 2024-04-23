@@ -1,4 +1,6 @@
 @startuml
+left to right direction
+
 class Main{ 
 	 - {static} ERR_PREFIX : String = "ERROR: " {readOnly}
 	 - {static} ERR_NO_COMPRENSORI_CREATI : String = ERR_PREFIX + "Non hai ancora creato un comprensorio." {readOnly}

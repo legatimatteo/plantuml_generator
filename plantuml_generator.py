@@ -19,7 +19,7 @@ def print_help():
 
 def write_file(filename, classes):
     with open(filename, 'w') as file:
-        file.write('@startuml\n')
+        file.write('@startuml\nleft to right direction\n\n')
         for j_class in classes:
             if j_class is not None:
                 file.write(j_class.toPlantUML('Attributes', 'Methods'))
