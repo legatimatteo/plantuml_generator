@@ -26,32 +26,35 @@ def write_file(filename, classes):
 
         file.write('@enduml\n')
 
-def parse_java_file(file_path):
+def parse_java_file(file_path, classes_founded):
     with open(file_path, 'r') as file:
         java_code = file.read()
 
     map_regex = '(?:\s*<\s*\w+\s*(?:,\s*\w+\s*)*>)'
-    class_type = ''
+    class_name_regex = '|'.join([item["name"] for item in classes_founded if item["type"] == "class"])
+    interface_name_regex = '|'.join([item["name"] + '\s*.*?' for item in classes_founded  if item["type"] == "interface"] )
 
     # find class name and visibility
-    class_name_visibility = re.search(r'(public|private|protected)?\s*(class|interface)\s+(.*?)\s*{', java_code)
-    print('TIPO')
-    print(class_name_visibility.group(3))
-    name = []
-    if class_name_visibility is not None:
-        class_visibility = class_name_visibility.group(1)
-        class_type = class_name_visibility.group(2)
-        class_name = class_name_visibility.group(3)
-        name = [{"visibility" : VISIBILITY_MODIFIER[class_visibility], "type" : class_type, "name" : class_name}]
-    else:
+    class_name_result = re.search(r'(public|private|protected)?\s*(class|interface)\s+('+ class_name_regex + '|' + interface_name_regex +r')\s*(implements\s+(' + interface_name_regex + r')*)?\s*(extends\s+(' + class_name_regex + r')*)?(?:\s*{)', java_code)
+    if class_name_result is None:
         print("No classes/interfaces found in " + file_path)
         return
+    
+    class_visibility = class_name_result.group(1)
+    class_type = class_name_result.group(2)
+    class_name = class_name_result.group(3)
+    class_dependencies = class_name_result.group(4) 
+    
+    print(class_type)
+    print(class_name)
+    print(class_dependencies)
+    name = [{"visibility" : VISIBILITY_MODIFIER[class_visibility], "type" : class_type, "name" : class_name, "dependencies" : class_dependencies}]
 
     # finds attributes
     attributes_list = []
     attributes = re.findall(r'(public|private|protected)\s*(static)?\s*(final)?\s+(\w+' + map_regex + r'?)\s+(\w+)(?:\s*=\s*)?(.*?)?;', java_code)
-    print('ATTRIBUTES')
-    print(attributes)
+    #print('ATTRIBUTES')
+    #print(attributes)
     if attributes:
         for attr in attributes:
             if len(attr) >= 3:
@@ -72,8 +75,8 @@ def parse_java_file(file_path):
             )
         # find methods
         methods = re.findall(r'(public|private|protected)\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
-        print('METHODS')
-        print(methods)
+        #print('METHODS')
+        #print(methods)
         if methods:
             for method in methods:
                 visibility, static, return_type, method_name, parameters = method
@@ -85,8 +88,8 @@ def parse_java_file(file_path):
     # find methods interface
     if class_type == 'interface':
         methods = re.findall(r'(public|private|protected)?\s*(static)?\s+(\w+)\s+(\w+)\s*\((.*?)\)', java_code)
-        print('METHODS')
-        print(methods)
+        #print('METHODS')
+        #print(methods)
         if methods:
             for method in methods:
                 visibility, static, return_type, method_name, parameters = method
@@ -101,15 +104,30 @@ def parse_java_file(file_path):
 
     return java_class(name, attributes_list, methods_list)
 
-
+def parse_java_class (file_path):
+    with open(file_path, 'r') as file:
+        java_code = file.read()
+        
+        # find class name and visibility
+        class_search = re.search(r'(?:public|private|protected)?\s*(class|interface)\s+(\w+)\s*(?:{)?', java_code)
+        if class_search is None:
+            print("No classes/interfaces found in " + file_path)
+            return
+            
+        class_type = class_search.group(1)
+        class_name = class_search.group(2)
+        return {"type" : class_type, "name" : class_name}
+    
 
     
 if __name__ == '__main__':
     if len(sys.argv) < 3:
+
         print_help()
         sys.exit(1)
 
     classes_list = []
+    classes_founded = []
     option = sys.argv[1]
     project_path = sys.argv[2]
 
@@ -141,9 +159,15 @@ if __name__ == '__main__':
                 if file.endswith('.java') and not file.startswith('.'):
                     file_list.append(os.path.join(root, file))
 
-        file_list.remove
         for file in file_list:
-            classes_list.append(parse_java_file(file))
+            classes_founded.append(parse_java_class(file))
+        
+        for file in file_list:
+            classes_list.append(parse_java_file(file, classes_founded))
+
+            
+            
+        
 
     else:
         print_help()

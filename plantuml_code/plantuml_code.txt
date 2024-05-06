@@ -1,7 +1,7 @@
 @startuml
 left to right direction
 
-class Main{ 
+class Main { 
 	 - {static} ERR_PREFIX : String = "ERROR: " {readOnly}
 	 - {static} ERR_NO_COMPRENSORI_CREATI : String = ERR_PREFIX + "Non hai ancora creato un comprensorio." {readOnly}
 	 - {static} ERR_COMPRENSORIO_ESISTENTE : String = ERR_PREFIX + "Il comprensorio che vuoi creare esiste già." {readOnly}
@@ -11,30 +11,18 @@ class Main{
 	 - {static} ERR_NO_GERARCHIE_CREATE : String = ERR_PREFIX + "Non hai ancora creato una gerarchia." {readOnly}
 	 + {static} ERR_FATTORE_GIA_IMPOSTATO : String = ERR_PREFIX + "Il valore del fattore di conversione scelto é giá stato impostato." {readOnly}
 	 + {static} ERR_DOMINIO_GIA_ESISTENTE : String = ERR_PREFIX + "Dominio già esistente nella categoria padre" {readOnly}
+	 + {static} ERR_FATTORI_GIA_IMPOSTATI : String = ERR_PREFIX + "Tutti i fattori di conversione sono già stati impostati." {readOnly}
 	 - {static} MENU_CONFIGURATORE_TITOLO : String = "Menu configuratore" {readOnly} 
 	 + {static} main(String[] args)
 	 - {static} creaNuovoComprensorio(Organizzazione org)
 	 - {static} creaNuovaRadice(Organizzazione org)
 	 - {static} aggiungiCategoria(Organizzazione _org, Gerarchia g)
-	 - {static} selezionaCategoria(Organizzazione _org)
 	 - {static} selezionaCoppia(Organizzazione _org)
 	 - {static} selezionaComprensorio(Organizzazione _org)
 	 + {static} selezionaGerarchia(Organizzazione _org) 
 }
-class PasswordManagement{ 
-	 -  password : String   
-	 +  PasswordManagement(String _password, byte[] _sale)
-	 +  getPassword() 
-}
-class Comprensorio{ 
-	 -  nome : String  {readOnly}
-	 -  comuniLimitrofi : ArrayList<String>  {readOnly} 
-	 +  Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
-	 +  getNome()
-	 +  toStringComuniLimitrofi()
-	 +  toString() 
-}
-class FattoreDiConversione{ 
+class FattoreDiConversione { 
+	 -  view : ViewFattoriDiConversione  
 	 - {static} MAX_VALUE : float = 2 {readOnly}
 	 - {static} MIN_VALUE : float = 1 / MAX_VALUE {readOnly}
 	 -  coppia : Coppia  
@@ -50,12 +38,26 @@ class FattoreDiConversione{
 	 +  getValore()
 	 +  getValoreInverso()
 	 +  getFattoreInverso()
+	 +  getCategoriaDipendente(FattoreDiConversione fattoreDipendente)
 	 + {static} getMAX_VALUE()
 	 + {static} getMIN_VALUE()
 	 +  setValore(float _valore)
 	 +  toString() 
 }
-class Configuratore{ 
+class PasswordManagement { 
+	 -  password : String   
+	 +  PasswordManagement(String _password, byte[] _sale)
+	 +  getPassword() 
+}
+class Comprensorio { 
+	 -  nome : String  {readOnly}
+	 -  comuniLimitrofi : ArrayList<String>  {readOnly} 
+	 +  Comprensorio(String nome, ArrayList<String> comuniLimitrofi)
+	 +  getNome()
+	 +  toStringComuniLimitrofi()
+	 +  toString() 
+}
+class Configuratore { 
 	 -  username : String  
 	 -  organizzazione : Organizzazione  
 	 -  password : PasswordManagement  
@@ -66,7 +68,7 @@ class Configuratore{
 	 +  getPassword()
 	 +  getOrganizzazione() 
 }
-class Gerarchia{ 
+class Gerarchia { 
 	 -  radice : Categoria  
 	 -  comprensorio : Comprensorio   
 	 +  Gerarchia(Categoria _radice, Comprensorio _comprensorio)
@@ -78,7 +80,7 @@ class Gerarchia{
 	 +  getCategoria(String _nomeCategoriaDaCercare)
 	 +  esisteCategoria(String _nomeCategoriaDaCercare) 
 }
-class Categoria{ 
+class Categoria { 
 	 -  nome : String  
 	 -  campo : String  
 	 -  descrizione : String  
@@ -95,9 +97,10 @@ class Categoria{
 	 +  getNome()
 	 +  setCampo(String _campo)
 	 +  setNome(String _nome)
-	 +  setDescrizione(String _descrizione) 
+	 +  setDescrizione(String _descrizione)
+	 +  esisteDominio(String _dominio) 
 }
-class Coppia{ 
+class Coppia { 
 	 -  cat1 : Categoria  
 	 -  cat2 : Categoria   
 	 +  Coppia(Categoria _cat1, Categoria _cat2)
@@ -110,10 +113,31 @@ class Coppia{
 	 +  getCoppiaInversa()
 	 +  equals(Coppia _coppia) 
 }
-class Organizzazione{ 
+class ControllerFattoriDiConversione { 
+	 -  model : ModelFattoriDiConversione  
+	 -  view : ViewFattoriDiConversione  
+	 -  fileManager : FileManagerFattori  
+	 -  fattoriGiaValutatiPerMaxValue : ArrayList<FattoreDiConversione>   
+	 +  ControllerFattoriDiConversione(ModelFattoriDiConversione _model, String _username, List<Categoria> _foglie)
+	 +  inizializzaFattoriDiConversione(List<Categoria> _foglie)
+	 -  risolviDipendenza(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente, FattoreDiConversione _fattoreDipendente)
+	 -  creaFattoreDipendente(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente, FattoreDiConversione _fattoreDipendente)
+	 -  cercaDipendenze(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente)
+	 +  stampaFattoriDipendenti(Organizzazione _org)
+	 +  rimuoviFattoriDipendentiDa(Categoria _categoriaPadre)
+	 +  isFattoriSettati()
+	 +  isNomeCoppiaInverso(String _nomeCoppia)
+	 +  getFattorePerNome(String _nomeCoppia)
+	 +  setValoreFattore(String _nomeCoppia, float _valore)
+	 +  impostaValoreFattoreDiConversione(String _nomeCoppia, float _valore)
+	 -  importaFattori()
+	 +  salvaFattori()
+	 +  verificaValiditaFattori() 
+}
+class Organizzazione { 
 	 -  gestioneComprensori : GestioneComprensori  
 	 -  gestioneGerarchie : GestioneGerarchie  
-	 -  gestioneFattori : GestioneFattori  
+	 -  controllerFattoriDiConversione : ControllerFattoriDiConversione  
 	 -  nome : String   
 	 +  Organizzazione(String _username)
 	 -  fetchComprensori()
@@ -128,32 +152,15 @@ class Organizzazione{
 	 +  isFattoriSettati()
 	 +  setfattoreDiConversione(String _coppia, float _valore)
 	 +  inizializzaFattoriDiConversione()
-	 +  stampaFattoriDipendenti(Categoria _categoriaDipendente)
+	 +  stampaFattoriDipendenti()
 	 +  stampaComprensori()
 	 +  getNome()
 	 +  setNome(String _nome)
 	 +  esisteComprensorio(String _nome)
-	 +  aggiungiComprensorio(Comprensorio _comprensorio) 
+	 +  aggiungiComprensorio(Comprensorio _comprensorio)
+	 +  isFattoriValidi() 
 }
-class GestioneFattori{ 
-	 -  fattori : Map<String, FattoreDiConversione>  
-	 -  fileManager : FileManagerFattori   
-	 +  GestioneFattori(String _username, List<Categoria> _foglie)
-	 +  inizializzaFattoriDiConversione(List<Categoria> _foglie)
-	 -  risolviDipendenza(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente, FattoreDiConversione _fattoreDipendente)
-	 -  cercaDipendenze(Categoria _categoriaCorrente, FattoreDiConversione _fattoreCorrente)
-	 +  stampaFattoriDipendenti(Categoria _categoriaFoglia)
-	 +  rimuoviFattoriDipendentiDa(Categoria _categoriaPadre)
-	 +  isFattoriSettati()
-	 +  isNomeCoppiaInverso(String _nomeCoppia)
-	 +  getFattorePerNome(String _nomeCoppia)
-	 +  setValoreFattore(String _nomeCoppia, float _valore)
-	 +  impostaValoreFattoreDiConversione(String _nomeCoppia, float _valore)
-	 -  importaFattori()
-	 +  salvaFattori()
-	 +  stampaFattoriDiConversione() 
-}
-class GestioneConfiguratori implements Utenti{ 
+class GestioneConfiguratori implements Utenti { 
 	 - {static} USERNAME_PREDEFINITO : String = "admin" {readOnly}
 	 - {static} PASSWORD_PREDEFINITA : String = "admin" {readOnly}
 	 -  configuratori : ArrayList<Configuratore>  
@@ -169,7 +176,7 @@ class GestioneConfiguratori implements Utenti{
 	 +  getConfiguratoreByUsername(String username)
 	 +  toString() 
 }
-class GestioneGerarchie{ 
+class GestioneGerarchie { 
 	 -  gerarchie : Map<String, Gerarchia>  
 	 -  fileManager : FileManagerGerarchie   
 	 +  GestioneGerarchie(String _username)
@@ -180,7 +187,7 @@ class GestioneGerarchie{
 	 -  importaGerarchie()
 	 +  salvaGerarchie() 
 }
-class GestioneComprensori{ 
+class GestioneComprensori { 
 	 -  comprensori : List<Comprensorio>  
 	 -  fileManager : FileManagerComprensori   
 	 +  GestioneComprensori(String _username)
@@ -190,6 +197,10 @@ class GestioneComprensori{
 	 +  aggiungiComprensorio(Comprensorio _comprensorio)
 	 -  importaComprensorio()
 	 +  salvaComprensorio() 
+}
+class ModelFattoriDiConversione { 
+	 -  fattori : Map<String, FattoreDiConversione>   
+	 +  ModelFattoriDiConversione() 
 }
 class FileManagerConfiguratori implements FileManager <ArrayList<Configuratore>>{ 
 	 - {static} FILENAME : String = "Utenti/configuratori.xml" {readOnly} 
@@ -225,10 +236,16 @@ class FileManagerGerarchie implements FileManager <Map<String, Gerarchia>>{
 	 -  scriviFigli(Document doc, Categoria cat_padre, Element elem_padre)
 	 -  haFigli(NodeList nodeList) 
 }
-interface Utenti <T>{  
+class ViewFattoriDiConversione { 
+	 -  controller : ControllerFattoriDiConversione   
+	 +  ViewFattoriDiConversione(ControllerFattoriDiConversione controller)
+	 +  stampaFattoriDipendenti(Categoria _categoriaFoglia)
+	 +  selezionaCategoria(Organizzazione _org) 
+}
+interface Utenti <T> {  
 	 +  accedi(String _username) 
 }
-interface FileManager <T>{  
+interface FileManager <T> {  
 	 +  importa()
 	 +  salva(T _lista) 
 }
